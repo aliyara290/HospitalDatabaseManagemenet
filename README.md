@@ -44,11 +44,7 @@ To run this project, you need:
    CREATE DATABASE HospitalManagementData;
    USE HospitalManagementData;
    ```
-3. Execute the `schema.sql` file to create tables and relationships:
-   ```sql
-   SOURCE schema.sql;
-   ```
-4. Populate tables with sample data if required.
+3. Populate tables with sample data if required.
 
 ## Sample Queries
 

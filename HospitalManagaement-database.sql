@@ -1,71 +1,72 @@
-CREATE DATABASE HospitalManagement;
-USE HospitalManagement;
 
+CREATE DATABASE HospitalManagementData;
+USE HospitalManagementData;
+show databases;
 CREATE TABLE patients (
-    patient_id INT AUTO_INCREMENT,
+    patient_id INT(11) AUTO_INCREMENT,
     first_name VARCHAR(50) NOT NULL,
-    last_name VARCHAR(50),
-    gender ENUM('Male', 'Female'),
+    last_name VARCHAR(50)  NOT NULL,
+    gender ENUM('Male', 'Female', 'Other'),
     date_of_birth DATE,
-    phone_number VARCHAR(15),
-    email VARCHAR(100),
-    address VARCHAR(255),
+    phone_number VARCHAR(15)  NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    address VARCHAR(255) ,
     PRIMARY KEY (patient_id)
 );
 
 CREATE TABLE departments (
-    department_id INT AUTO_INCREMENT,
-    department_name VARCHAR(50),
-    location VARCHAR(100),
+    department_id INT(11) AUTO_INCREMENT,
+    department_name VARCHAR(50)  NOT NULL,
+    location VARCHAR(100)  NOT NULL,
     PRIMARY KEY (department_id)
 );
 
 CREATE TABLE doctors (
-    doctor_id INT AUTO_INCREMENT,
-    first_name VARCHAR(50),
-    last_name VARCHAR(50),
-    specialization VARCHAR(50),
-    phone_number VARCHAR(15),
-    email VARCHAR(100),
-    department_id INT,
+    doctor_id INT(11) AUTO_INCREMENT,
+    first_name VARCHAR(50) NOT NULL ,
+    last_name VARCHAR(50) NOT NULL ,
+    specialization VARCHAR(50) NOT NULL,
+    phone_number VARCHAR(15) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    department_id INT(11),
     PRIMARY KEY (doctor_id),
     FOREIGN KEY (department_id) REFERENCES departments(department_id)
 );
 
 CREATE TABLE rooms (
-    room_id INT AUTO_INCREMENT,
-    room_number VARCHAR(10),
-    room_type ENUM('General', 'Private', 'ICU'),
+    room_id INT(11) AUTO_INCREMENT,
+    room_number VARCHAR(10)  NOT NULL,
+    room_type ENUM('General', 'Private', 'ICU') NOT NULL,
     availability TINYINT(1),
     PRIMARY KEY (room_id)
 );
 
 CREATE TABLE appointments (
-    appointment_id INT AUTO_INCREMENT,
-    appointment_date DATE,
-    appointment_time TIME,
-    doctor_id INT,
-    patient_id INT,
-    reason VARCHAR(255),
+    appointment_id INT(11) AUTO_INCREMENT,
+    appointment_date DATE NOT NULL,
+    appointment_time TIME NOT NULL,
+    doctor_id INT(11),
+    patient_id INT(11),
+    reason VARCHAR(255) NOT NULL,
     PRIMARY KEY (appointment_id),
     FOREIGN KEY (patient_id) REFERENCES patients(patient_id),
     FOREIGN KEY (doctor_id) REFERENCES doctors(doctor_id)
 );
 
 CREATE TABLE medications (
-    medication_id INT AUTO_INCREMENT,
-    medication_name VARCHAR(100),
-    dosage VARCHAR(50),
+    medication_id INT(11) AUTO_INCREMENT,
+    medication_name VARCHAR(100)  NOT NULL,
+    dosage VARCHAR(50) NOT NULL,
     PRIMARY KEY (medication_id)
 );
 
 CREATE TABLE prescriptions (
-    prescription_id INT AUTO_INCREMENT,
-    patient_id INT,
-    doctor_id INT,
-    medication_id INT,
-    prescription_date DATE,
-    dosage_instructions VARCHAR(255),
+    prescription_id INT(11) AUTO_INCREMENT,
+    patient_id INT(11),
+    doctor_id INT(11),
+    medication_id INT(11),
+    prescription_date DATE NOT NULL,
+    dosage_instructions VARCHAR(255) NOT NULL,
     PRIMARY KEY (prescription_id),
     FOREIGN KEY (patient_id) REFERENCES patients(patient_id),
     FOREIGN KEY (doctor_id) REFERENCES doctors(doctor_id),
@@ -73,24 +74,85 @@ CREATE TABLE prescriptions (
 );
 
 CREATE TABLE admissions (
-    admission_id INT AUTO_INCREMENT,
-    patient_id INT,
-    room_id INT,
-    admission_date DATE,
+    admission_id INT(11) AUTO_INCREMENT,
+    patient_id INT(11),
+    room_id INT(11),
+    admission_date DATE NOT NULL,
     discharge_date DATE,
     PRIMARY KEY (admission_id),
     FOREIGN KEY (patient_id) REFERENCES patients(patient_id),
     FOREIGN KEY (room_id) REFERENCES rooms(room_id)
 );
+SET SQL_SAFE_UPDATES = 0;
+DELETE FROM admissions;
+DELETE FROM prescriptions;
+DELETE FROM medications;
+DELETE FROM appointments;
+DELETE FROM rooms;
+DELETE FROM staff;
+DELETE FROM doctors;
+DELETE FROM departments;
+DELETE FROM patients;
+SET SQL_SAFE_UPDATES = 1;
 
 CREATE TABLE staff (
-    staff_id INT AUTO_INCREMENT,
-    first_name VARCHAR(50),
-    last_name VARCHAR(50),
-    job_title VARCHAR(50),
-    phone_number VARCHAR(15),
-    email VARCHAR(100),
-    department_id INT,
+    staff_id INT(11) AUTO_INCREMENT,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    job_title VARCHAR(50) NOT NULL,
+    phone_number VARCHAR(15) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    department_id INT(11),
     PRIMARY KEY (staff_id),
     FOREIGN KEY (department_id) REFERENCES departments(department_id)
 );
+show tables;
+-- question 2
+SELECT * from departments;
+ 
+ -- question 3
+SELECT * from patients
+ORDER BY date_of_birth;
+
+-- question 4
+
+SELECT DISTINCT gender from patients;
+
+-- question 5 
+SELECT * from doctors LIMIT 3;
+
+-- question 6
+SELECT * 
+FROM patients
+WHERE date_of_birth < '2000-01-01';
+
+-- question 7 
+SELECT *
+FROM doctors
+WHERE specialization = ANY (SELECT specialization FROM doctors WHERE specialization = 'Neurologist' OR specialization = 'Cardiologist');
+
+select * from admissions;
+-- question 8 
+SELECT * 
+FROM admissions
+WHERE admission_date BETWEEN '2024-12-01' AND '2024-12-07' ORDER BY admission_date;
+-- question 9 
+ALTER TABLE patients ADD age_category ENUM('Child', 'Adult', 'Senior');
+SELECT * from patients;
+-- question 10 
+SELECT COUNT(*)
+FROM appointments;
+-- question 11
+SELECT department_id, COUNT(*) AS total_of_doctors
+FROM doctors
+GROUP BY(department_id);
+-- question 12
+SELECT AVG(timestampdiff(year,date_of_birth,now())) AS Average 
+FROM patients;
+-- question 13
+SELECT MAX(CONCAT(appointment_date, ' ', appointment_time)) AS appointement_calendrie
+FROM appointments;
+SELECT * FROM appointments;
+-- question 14
+-- question 15
+-- question 16

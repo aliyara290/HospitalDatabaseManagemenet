@@ -83,17 +83,6 @@ CREATE TABLE admissions (
     FOREIGN KEY (patient_id) REFERENCES patients(patient_id),
     FOREIGN KEY (room_id) REFERENCES rooms(room_id)
 );
-SET SQL_SAFE_UPDATES = 0;
-DELETE FROM admissions;
-DELETE FROM prescriptions;
-DELETE FROM medications;
-DELETE FROM appointments;
-DELETE FROM rooms;
-DELETE FROM staff;
-DELETE FROM doctors;
-DELETE FROM departments;
-DELETE FROM patients;
-SET SQL_SAFE_UPDATES = 1;
 
 CREATE TABLE staff (
     staff_id INT(11) AUTO_INCREMENT,
@@ -106,6 +95,8 @@ CREATE TABLE staff (
     PRIMARY KEY (staff_id),
     FOREIGN KEY (department_id) REFERENCES departments(department_id)
 );
+
+
 show tables;
 -- question 2
 SELECT * from departments;
@@ -154,5 +145,31 @@ SELECT MAX(CONCAT(appointment_date, ' ', appointment_time)) AS appointement_cale
 FROM appointments;
 SELECT * FROM appointments;
 -- question 14
+SELECT room_id, COUNT(*) AS total_admissions 
+FROM admissions 
+GROUP BY room_id;
 -- question 15
--- question 16
+SELECT * 
+FROM patients 
+WHERE email IS NULL OR email = '';
+
+-- question 17
+DELETE FROM appointments 
+WHERE appointment_date < '2024-01-01';
+
+-- question 18
+UPDATE departments 
+SET 
+    department_name = 'Cancer Treatment' 
+WHERE 
+    department_name = 'Oncology';
+    SELECT * FROM departments;
+
+-- question 19
+SELECT gender, COUNT(*) AS total_patients 
+FROM patients 
+GROUP BY gender 
+HAVING total_patients >= 2;
+
+-- question 20
+SET SQL_SAFE_UPDATES = 0;
